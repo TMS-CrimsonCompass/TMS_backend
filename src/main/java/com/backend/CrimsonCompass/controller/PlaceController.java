@@ -28,7 +28,7 @@ public class PlaceController {
     // GET /api/places/search?q=La
     @GetMapping("/search")
     public ResponseEntity<List<PlaceResponseDTO>> searchPlaces(@RequestParam("q") String query) {
-        List<PlaceResponseDTO> responseDTOs = placeService.searchPlaces(query); // Delegate to service
+        List<PlaceResponseDTO> responseDTOs = placeService.searchPlaces(query);
         return ResponseEntity.ok(responseDTOs);
     }
 

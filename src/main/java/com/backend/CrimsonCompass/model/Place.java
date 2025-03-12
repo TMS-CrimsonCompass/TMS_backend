@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -23,9 +25,9 @@ public class Place {
 
     private String location;
 
-    private int latitude;
+    private double latitude;
 
-    private int longitude;
+    private double longitude;
 
     private String country;
 
@@ -42,6 +44,12 @@ public class Place {
 
     public enum Category {
         Historical, Adventure, Nature, Beach, City, Religious, Other
+    }
+
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PlaceImage> images = new ArrayList<>();
+
+    public Place() {
     }
 
 }

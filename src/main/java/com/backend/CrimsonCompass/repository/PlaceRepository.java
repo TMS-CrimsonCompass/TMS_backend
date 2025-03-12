@@ -20,7 +20,7 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
 
     List<Place> findByCountry(String country); // Find places by country
 
-    @Query("SELECT p FROM Place p LEFT JOIN FETCH p.images WHERE " +
+    @Query("SELECT DISTINCT p FROM Place p LEFT JOIN FETCH p.images WHERE " +
             "LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(p.location) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(p.country) LIKE LOWER(CONCAT('%', :query, '%')) OR " +

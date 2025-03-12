@@ -53,4 +53,32 @@ public class PlaceService implements IPlaceService {
     public List<Place> getPlacesByCountry(String country) {
         return placeRepository.findByCountry(country);
     }
+
+    public List<PlaceResponseDTO> searchPlaces(String query) {
+        List<Place> places = placeRepository.searchPlaces(query);
+
+        return places.stream()
+                .map(place -> new PlaceResponseDTO(
+                        place.getPlaceId(),
+                        place.getName(),
+                        place.getDescription(),
+                        place.getLocation(),
+                        place.getLatitude(),
+                        place.getLongitude(),
+                        place.getCountry(),
+                        place.getState(),
+                        place.getCity(),
+                        place.getCategory().name(),
+                        // Properly arrange parentheses for nested stream operations
+                        place.getImages().stream()
+                                .map(img -> new PlaceImageResponseDTO(
+                                        img.getImageId(),
+                                        img.getImageUrl()
+                                ))
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+    }
+
+
 }
