@@ -4,13 +4,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-
 
 @Entity
 @Table(name = "Place_Images")
@@ -19,7 +15,6 @@ import java.time.LocalDateTime;
 public class PlaceImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private int imageId;
 
     @ManyToOne
@@ -27,8 +22,4 @@ public class PlaceImage {
     private Place place;
 
     private String imageUrl;
-
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt = LocalDateTime.now();
 }

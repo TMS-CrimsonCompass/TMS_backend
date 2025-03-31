@@ -5,6 +5,7 @@ import com.backend.CrimsonCompass.dto.PlaceResponseDTO;
 import com.backend.CrimsonCompass.dto.PlaceImageResponseDTO;
 import com.backend.CrimsonCompass.model.Place;
 import com.backend.CrimsonCompass.model.PlaceImage;
+import com.backend.CrimsonCompass.model.PlaceCategory; // Import PlaceCategory
 import com.backend.CrimsonCompass.service.IPlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -59,30 +60,30 @@ public class PlaceController {
         place.setCountry(placeRequest.getCountry());
         place.setState(placeRequest.getState());
         place.setCity(placeRequest.getCity());
-        place.setCategory(Place.Category.valueOf(placeRequest.getCategory()));
+        PlaceCategory category = new PlaceCategory(); // Create PlaceCategory instance
+        category.setName(placeRequest.getCategory()); // assuming name is passed instead of ID
+        place.setCategory(category); // Set the category
 
         Place savedPlace = placeService.savePlace(place);
         return ResponseEntity.ok(convertToResponseDTO(savedPlace));
     }
 
-
+    @GetMapping
+    public ResponseEntity<List<PlaceResponseDTO>> getAllPlaces() {
+        List<Place> places = placeService.getAllPlaces();
+        List<PlaceResponseDTO> response = places.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/category/{category}")
     public ResponseEntity<List<PlaceResponseDTO>> getPlacesByCategory(@PathVariable String category) {
-        try {
-            // Convert string to enum
-            Place.Category categoryEnum = Place.Category.valueOf(category);
-
-            // Fetch places by category
-            List<Place> places = placeService.getPlacesByCategory(categoryEnum.name());
-            List<PlaceResponseDTO> response = places.stream()
-                    .map(this::convertToResponseDTO)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            // Handle invalid category value
-            return ResponseEntity.badRequest().body(null);
-        }
+        List<Place> places = placeService.getPlacesByCategory(category);
+        List<PlaceResponseDTO> response = places.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/city/{city}")
@@ -119,7 +120,7 @@ public class PlaceController {
                 place.getCountry(),
                 place.getState(),
                 place.getCity(),
-                place.getCategory().name(),
+                place.getCategory().getName(), // Updated line
                 imageResponses // Include images here
         );
     }

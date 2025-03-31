@@ -35,16 +35,13 @@ public class Place {
 
     private String city;
 
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private PlaceCategory category;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime updatedAt = LocalDateTime.now();
-
-    public enum Category {
-        Historical, Adventure, Nature, Beach, City, Religious, Other
-    }
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlaceImage> images = new ArrayList<>();
@@ -53,4 +50,3 @@ public class Place {
     }
 
 }
-

@@ -6,6 +6,8 @@ import com.backend.CrimsonCompass.model.Place;
 import com.backend.CrimsonCompass.model.PlaceImage;
 import com.backend.CrimsonCompass.repository.PlaceImageRepository;
 import com.backend.CrimsonCompass.repository.PlaceRepository;
+import com.backend.CrimsonCompass.repository.PlaceCategoryRepository;
+import com.backend.CrimsonCompass.model.PlaceCategory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,10 +19,12 @@ public class PlaceService implements IPlaceService {
 
     private final PlaceRepository placeRepository;
     private final PlaceImageRepository placeImageRepository;
+    private final PlaceCategoryRepository placeCategoryRepository;
 
-    public PlaceService(PlaceRepository placeRepository, PlaceImageRepository placeImageRepository) {
+    public PlaceService(PlaceRepository placeRepository, PlaceImageRepository placeImageRepository, PlaceCategoryRepository placeCategoryRepository) {
         this.placeRepository = placeRepository;
         this.placeImageRepository = placeImageRepository;
+        this.placeCategoryRepository = placeCategoryRepository;
     }
 
 
@@ -40,7 +44,9 @@ public class PlaceService implements IPlaceService {
     }
 
     @Override
-    public List<Place> getPlacesByCategory(String category) {
+    public List<Place> getPlacesByCategory(String categoryName) {
+        PlaceCategory category = placeCategoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new RuntimeException("Category not found: " + categoryName));
         return placeRepository.findByCategory(category);
     }
 
@@ -52,6 +58,11 @@ public class PlaceService implements IPlaceService {
     @Override
     public List<Place> getPlacesByCountry(String country) {
         return placeRepository.findByCountry(country);
+    }
+
+    @Override
+    public List<Place> getAllPlaces() {
+        return placeRepository.findAll();
     }
 
     public List<PlaceResponseDTO> searchPlaces(String query) {
@@ -68,7 +79,7 @@ public class PlaceService implements IPlaceService {
                         place.getCountry(),
                         place.getState(),
                         place.getCity(),
-                        place.getCategory().name(),
+                        place.getCategory().getName(),
                         // Properly arrange parentheses for nested stream operations
                         place.getImages().stream()
                                 .map(img -> new PlaceImageResponseDTO(

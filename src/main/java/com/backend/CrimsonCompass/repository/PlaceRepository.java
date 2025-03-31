@@ -1,6 +1,7 @@
 package com.backend.CrimsonCompass.repository;
 
 import com.backend.CrimsonCompass.model.Place;
+import com.backend.CrimsonCompass.model.PlaceCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +15,7 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
 
     Optional<Place> findById(Integer placeId); // Find a place by ID
 
-    List<Place> findByCategory(String category); // Find places by category
+    List<Place> findByCategory(PlaceCategory category); // Find places by category
 
     List<Place> findByCity(String city); // Find places by city
 
