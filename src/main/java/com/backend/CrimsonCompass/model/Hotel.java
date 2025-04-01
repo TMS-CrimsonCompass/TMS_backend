@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Hotels")
@@ -44,9 +45,6 @@ public class Hotel {
 
     private BigDecimal rating;
 
-    @Column(columnDefinition = "TEXT")
-    private String amenities;
-
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -55,4 +53,12 @@ public class Hotel {
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HotelImage> images;
+
+    @ManyToMany
+    @JoinTable(
+        name = "Hotel_Amenities",
+        joinColumns = @JoinColumn(name = "hotel_id"),
+        inverseJoinColumns = @JoinColumn(name = "amenity_id")
+    )
+    private Set<Amenity> amenities;
 }

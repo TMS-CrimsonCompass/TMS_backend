@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
+import com.backend.CrimsonCompass.dto.AmenityDTO;
 
 @Getter
 @Setter
@@ -20,6 +21,6 @@ public class HotelResponseDTO {
     private String city;
     private BigDecimal pricePerNight;
     private BigDecimal rating;
-    private String amenities;
+    private List<AmenityDTO> amenities;
     private List<String> imageUrls;
 }

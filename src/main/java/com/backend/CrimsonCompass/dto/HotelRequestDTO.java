@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,5 +19,5 @@ public class HotelRequestDTO {
     private String city;
     private BigDecimal pricePerNight;
     private BigDecimal rating;
-    private String amenities;
+    private List<String> amenities;
 }

@@ -3,8 +3,10 @@ package com.backend.CrimsonCompass.controller;
 import com.backend.CrimsonCompass.dto.HotelRequestDTO;
 import com.backend.CrimsonCompass.dto.HotelResponseDTO;
 import com.backend.CrimsonCompass.dto.HotelFilterRequestDTO;
+import com.backend.CrimsonCompass.dto.AmenityDTO;
 import com.backend.CrimsonCompass.model.Hotel;
 import com.backend.CrimsonCompass.model.HotelImage;
+import com.backend.CrimsonCompass.model.Amenity;
 import com.backend.CrimsonCompass.service.IHotelService;
 import com.backend.CrimsonCompass.repository.HotelImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +91,14 @@ public class HotelController {
         dto.setCity(hotel.getCity());
         dto.setPricePerNight(hotel.getPricePerNight());
         dto.setRating(hotel.getRating());
-        dto.setAmenities(hotel.getAmenities());
+
+        List<AmenityDTO> amenityDTOs = hotel.getAmenities().stream().map(amenity -> {
+            AmenityDTO a = new AmenityDTO();
+            a.setName(amenity.getName());
+            a.setIconPath(amenity.getIconPath());
+            return a;
+        }).collect(Collectors.toList());
+        dto.setAmenities(amenityDTOs);
 
         List<String> imageUrls = hotelImageRepository.findByHotelHotelId(hotel.getHotelId())
                 .stream()

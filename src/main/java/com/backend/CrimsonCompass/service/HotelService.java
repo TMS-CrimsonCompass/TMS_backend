@@ -3,24 +3,30 @@ package com.backend.CrimsonCompass.service;
 import com.backend.CrimsonCompass.dto.HotelRequestDTO;
 import com.backend.CrimsonCompass.dto.HotelFilterRequestDTO;
 import com.backend.CrimsonCompass.model.Hotel;
+import com.backend.CrimsonCompass.model.Amenity;
 import com.backend.CrimsonCompass.repository.HotelRepository;
 import com.backend.CrimsonCompass.repository.HotelImageRepository;
+import com.backend.CrimsonCompass.repository.AmenityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class HotelService implements IHotelService {
 
     private final HotelRepository hotelRepository;
     private final HotelImageRepository hotelImageRepository;
+    private final AmenityRepository amenityRepository;
 
     @Autowired
-    public HotelService(HotelRepository hotelRepository, HotelImageRepository hotelImageRepository) {
+    public HotelService(HotelRepository hotelRepository, HotelImageRepository hotelImageRepository, AmenityRepository amenityRepository) {
         this.hotelRepository = hotelRepository;
         this.hotelImageRepository = hotelImageRepository;
+        this.amenityRepository = amenityRepository;
     }
 
     @Override
@@ -36,7 +42,16 @@ public class HotelService implements IHotelService {
         hotel.setCity(hotelRequestDTO.getCity());
         hotel.setPricePerNight(hotelRequestDTO.getPricePerNight());
         hotel.setRating(hotelRequestDTO.getRating());
-        hotel.setAmenities(hotelRequestDTO.getAmenities());
+        List<String> amenityNames = hotelRequestDTO.getAmenities();
+        Set<Amenity> amenities = new HashSet<>();
+        if (amenityNames != null) {
+            for (String name : amenityNames) {
+                Amenity amenity = amenityRepository.findByName(name)
+                        .orElseThrow(() -> new RuntimeException("Amenity not found: " + name));
+                amenities.add(amenity);
+            }
+        }
+        hotel.setAmenities(amenities);
         return hotelRepository.save(hotel);
     }
 
