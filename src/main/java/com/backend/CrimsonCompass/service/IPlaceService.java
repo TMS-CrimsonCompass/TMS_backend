@@ -15,4 +15,5 @@ public interface IPlaceService {
     List<Place> getPlacesByCity(String city);
     List<Place> getPlacesByCountry(String country);
     List<PlaceResponseDTO> searchPlaces(String query);
+    List<Place> getAllPlaces();
 }
