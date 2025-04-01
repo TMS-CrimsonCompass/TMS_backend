@@ -4,10 +4,12 @@ import com.backend.CrimsonCompass.dto.HotelRequestDTO;
 import com.backend.CrimsonCompass.dto.HotelResponseDTO;
 import com.backend.CrimsonCompass.dto.HotelFilterRequestDTO;
 import com.backend.CrimsonCompass.dto.AmenityDTO;
+import com.backend.CrimsonCompass.dto.ReviewResponseDTO;
 import com.backend.CrimsonCompass.model.Hotel;
 import com.backend.CrimsonCompass.model.HotelImage;
 import com.backend.CrimsonCompass.model.Amenity;
 import com.backend.CrimsonCompass.service.IHotelService;
+import com.backend.CrimsonCompass.service.IReviewService;
 import com.backend.CrimsonCompass.repository.HotelImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +25,13 @@ public class HotelController {
 
     private final IHotelService hotelService;
     private final HotelImageRepository hotelImageRepository;
+    private final IReviewService reviewService;
 
     @Autowired
-    public HotelController(IHotelService hotelService, HotelImageRepository hotelImageRepository) {
+    public HotelController(IHotelService hotelService, HotelImageRepository hotelImageRepository, IReviewService reviewService) {
         this.hotelService = hotelService;
         this.hotelImageRepository = hotelImageRepository;
+        this.reviewService = reviewService;
     }
 
     @PostMapping
@@ -105,6 +109,9 @@ public class HotelController {
                 .map(HotelImage::getImageUrl)
                 .collect(Collectors.toList());
         dto.setImageUrls(imageUrls);
+
+        List<ReviewResponseDTO> reviews = reviewService.getReviewsByEntity(hotel.getHotelId().longValue(), "Hotel");
+        dto.setReviews(reviews);
 
         return dto;
     }

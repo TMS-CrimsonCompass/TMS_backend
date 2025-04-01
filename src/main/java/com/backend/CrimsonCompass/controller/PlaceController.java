@@ -3,10 +3,12 @@ package com.backend.CrimsonCompass.controller;
 import com.backend.CrimsonCompass.dto.PlaceRequestDTO;
 import com.backend.CrimsonCompass.dto.PlaceResponseDTO;
 import com.backend.CrimsonCompass.dto.PlaceImageResponseDTO;
+import com.backend.CrimsonCompass.dto.ReviewResponseDTO; // Import ReviewResponseDTO
 import com.backend.CrimsonCompass.model.Place;
 import com.backend.CrimsonCompass.model.PlaceImage;
 import com.backend.CrimsonCompass.model.PlaceCategory; // Import PlaceCategory
 import com.backend.CrimsonCompass.service.IPlaceService;
+import com.backend.CrimsonCompass.service.IReviewService; // Import IReviewService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +22,12 @@ import java.util.stream.Collectors;
 public class PlaceController {
 
     private final IPlaceService placeService;
+    private final IReviewService reviewService; // New field for IReviewService
 
     @Autowired
-    public PlaceController(IPlaceService placeService) {
+    public PlaceController(IPlaceService placeService, IReviewService reviewService) { // Updated constructor
         this.placeService = placeService;
+        this.reviewService = reviewService;
     }
 
     // GET /api/places/search?q=La
@@ -110,6 +114,8 @@ public class PlaceController {
                 .map(image -> new PlaceImageResponseDTO(image.getImageId(), image.getImageUrl()))
                 .collect(Collectors.toList());
 
+        List<ReviewResponseDTO> reviews = reviewService.getReviewsByEntity((long) place.getPlaceId(), "Place"); // New block to get reviews
+
         return new PlaceResponseDTO(
                 place.getPlaceId(),
                 place.getName(),
@@ -121,7 +127,8 @@ public class PlaceController {
                 place.getState(),
                 place.getCity(),
                 place.getCategory().getName(), // Updated line
-                imageResponses // Include images here
+                imageResponses, // Include images here
+                reviews // Include reviews here
         );
     }
 

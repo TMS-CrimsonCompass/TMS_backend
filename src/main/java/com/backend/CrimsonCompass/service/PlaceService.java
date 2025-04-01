@@ -80,13 +80,13 @@ public class PlaceService implements IPlaceService {
                         place.getState(),
                         place.getCity(),
                         place.getCategory().getName(),
-                        // Properly arrange parentheses for nested stream operations
                         place.getImages().stream()
                                 .map(img -> new PlaceImageResponseDTO(
                                         img.getImageId(),
                                         img.getImageUrl()
                                 ))
-                                .collect(Collectors.toList())
+                                .collect(Collectors.toList()),
+                        List.of()
                 ))
                 .collect(Collectors.toList());
     }

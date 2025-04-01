@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import com.backend.CrimsonCompass.dto.ReviewResponseDTO;
 
 @Getter
 @Setter
@@ -19,10 +20,12 @@ public class PlaceResponseDTO {
     private String city;
     private String category;
     private List<PlaceImageResponseDTO> images;
+    private List<ReviewResponseDTO> reviews;
 
     public PlaceResponseDTO(int placeId, String name, String description, String location,
                             Double latitude, Double longitude, String country, String state,
-                            String city, String category, List<PlaceImageResponseDTO> images) {
+                            String city, String category, List<PlaceImageResponseDTO> images,
+                            List<ReviewResponseDTO> reviews) {
         this.placeId = placeId;
         this.name = name;
         this.description = description;
@@ -34,5 +37,6 @@ public class PlaceResponseDTO {
         this.city = city;
         this.category = category;
         this.images = images;
+        this.reviews = reviews;
     }
 }
