@@ -57,4 +57,48 @@ public class SearchController {
 
         return suggestions;
     }
+
+    @GetMapping("/places/autocomplete")
+    public List<SearchSuggestionDTO> searchPlaces(@RequestParam String query) {
+        List<SearchSuggestionDTO> suggestions = new ArrayList<>();
+
+        List<Place> places = placeRepository.searchPlaces(query);
+        for (Place place : places) {
+            SearchSuggestionDTO dto = new SearchSuggestionDTO();
+            dto.setType("place");
+            dto.setId(place.getPlaceId());
+            dto.setName(place.getName());
+            dto.setLocation(place.getLocation());
+            dto.setCity(place.getCity());
+            dto.setCountry(place.getCountry());
+            if (place.getImages() != null && !place.getImages().isEmpty()) {
+                dto.setImage(place.getImages().get(0).getImageUrl());
+            }
+            suggestions.add(dto);
+        }
+
+        return suggestions;
+    }
+
+    @GetMapping("/hotels/autocomplete")
+    public List<SearchSuggestionDTO> searchHotels(@RequestParam String query) {
+        List<SearchSuggestionDTO> suggestions = new ArrayList<>();
+
+        List<Hotel> hotels = hotelRepository.searchHotels(query);
+        for (Hotel hotel : hotels) {
+            SearchSuggestionDTO dto = new SearchSuggestionDTO();
+            dto.setType("hotel");
+            dto.setId(hotel.getHotelId());
+            dto.setName(hotel.getName());
+            dto.setLocation(hotel.getLocation());
+            dto.setCity(hotel.getCity());
+            dto.setCountry(hotel.getCountry());
+            if (hotel.getImages() != null && !hotel.getImages().isEmpty()) {
+                dto.setImage(hotel.getImages().get(0).getImageUrl());
+            }
+            suggestions.add(dto);
+        }
+
+        return suggestions;
+    }
 }
