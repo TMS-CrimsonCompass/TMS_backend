@@ -98,8 +98,10 @@ public class HotelController {
 
         List<AmenityDTO> amenityDTOs = hotel.getAmenities().stream().map(amenity -> {
             AmenityDTO a = new AmenityDTO();
+            a.setAmenityId(amenity.getAmenityId());
             a.setName(amenity.getName());
-            a.setIconPath(amenity.getIconPath());
+            a.setIcon(amenity.getIcon());
+            a.setColor(amenity.getColor());
             return a;
         }).collect(Collectors.toList());
         dto.setAmenities(amenityDTOs);
