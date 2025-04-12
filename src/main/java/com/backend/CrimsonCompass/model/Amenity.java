@@ -21,7 +21,9 @@ public class Amenity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    private String iconPath;
+    private String icon;
+
+    private String color;
 
     @ManyToMany(mappedBy = "amenities")
     private Set<Hotel> hotels;

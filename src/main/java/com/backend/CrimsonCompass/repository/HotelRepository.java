@@ -26,4 +26,11 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer> {
       @Param("maxPrice") BigDecimal maxPrice,
       @Param("minRating") BigDecimal minRating
   );
+
+  @Query("SELECT DISTINCT h FROM Hotel h WHERE " +
+         "LOWER(h.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+         "LOWER(h.location) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+         "LOWER(h.country) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+         "LOWER(h.city) LIKE LOWER(CONCAT('%', :query, '%'))")
+  List<Hotel> searchHotels(@Param("query") String query);
 }
