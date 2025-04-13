@@ -2,7 +2,9 @@ package com.backend.CrimsonCompass.controller;
 
 import com.backend.CrimsonCompass.dto.ItineraryDTO;
 import com.backend.CrimsonCompass.dto.ItineraryResponseDTO;
+import com.backend.CrimsonCompass.dto.MasterItineraryWithItemsDTO;
 import com.backend.CrimsonCompass.model.Itinerary;
+import com.backend.CrimsonCompass.repository.UserItineraryRepository;
 import com.backend.CrimsonCompass.service.IItineraryService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -23,6 +25,9 @@ public class ItineraryController {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
+
+    @Autowired
+    private UserItineraryRepository userItineraryRepository;
 
     @PostMapping
     public Itinerary createItinerary(@RequestBody ItineraryDTO itineraryDTO, HttpServletRequest request) {
@@ -46,9 +51,11 @@ public class ItineraryController {
     }
 
     @GetMapping("/master/{masterItineraryId}")
-    public List<ItineraryResponseDTO> getItinerariesByMasterItineraryId(@PathVariable Integer masterItineraryId) {
+    public MasterItineraryWithItemsDTO getItinerariesByMasterItineraryId(@PathVariable Integer masterItineraryId) {
         List<Itinerary> itineraries = itineraryService.getItinerariesByMasterItineraryId(masterItineraryId);
-        return itineraries.stream().map(itinerary -> {
+        MasterItineraryWithItemsDTO result = new MasterItineraryWithItemsDTO();
+
+        List<ItineraryResponseDTO> dtoList = itineraries.stream().map(itinerary -> {
             ItineraryResponseDTO dto = new ItineraryResponseDTO();
             dto.setItineraryId(itinerary.getItineraryId());
             dto.setTitle(itinerary.getTitle());
@@ -77,9 +84,16 @@ public class ItineraryController {
             }
 
             dto.setEntityId(itinerary.getEntityId());
-
             return dto;
         }).toList();
+
+        userItineraryRepository.findById(masterItineraryId).ifPresent(master -> {
+            result.setMasterTitle(master.getTitle());
+            result.setMasterDescription(master.getDescription());
+        });
+
+        result.setItineraries(dtoList);
+        return result;
     }
 
     @PutMapping("/{itineraryId}")

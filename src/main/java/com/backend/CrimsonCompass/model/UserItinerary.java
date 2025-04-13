@@ -11,6 +11,8 @@ public class UserItinerary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer masterItineraryId;
+
     private Integer userItineraryId;
 
     @ManyToOne
@@ -24,6 +26,4 @@ public class UserItinerary {
 
     @Column(columnDefinition = "TEXT")
     private String description;
-
-    private Integer masterItineraryId;
 }
