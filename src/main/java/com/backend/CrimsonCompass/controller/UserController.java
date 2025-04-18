@@ -2,6 +2,7 @@ package com.backend.CrimsonCompass.controller;
 
 import com.backend.CrimsonCompass.dto.LoginRequest;
 import com.backend.CrimsonCompass.dto.LoginResponse;
+import com.backend.CrimsonCompass.dto.UserSyncRequest;
 import com.backend.CrimsonCompass.service.UserService;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,12 @@ public class UserController {
         Optional<User> user = userService.getUserByEmail(email);
         return user.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/sync")
+    public ResponseEntity<Void> syncUser(@RequestBody UserSyncRequest request) {
+        userService.syncOAuthUser(request);
+        return ResponseEntity.ok().build();
     }
 }
 
