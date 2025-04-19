@@ -87,5 +87,6 @@ public class UserService implements IUserService{
         userRepository.save(newUser);
     }
 
+    public Optional<User> getUserByAuthId(String authID) {return userRepository.findByAuthId(authID);}
 }
 

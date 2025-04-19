@@ -41,6 +41,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/sync")
                         .access((authentication, context) ->
                                 new AuthorizationDecision(ipAddressMatcher.matches(context.getRequest())))
