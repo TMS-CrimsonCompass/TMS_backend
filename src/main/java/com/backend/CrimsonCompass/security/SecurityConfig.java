@@ -18,9 +18,6 @@ import javax.crypto.SecretKey;
 @Configuration
 public class SecurityConfig {
     SecurityConstants securityConstants;
-    private String jwtSecret;
-    @Value("${jwt.expiration}")
-    private long jwtExpiration;
 
     public SecurityConfig(SecurityConstants securityConstants) {
         this.securityConstants = securityConstants;
