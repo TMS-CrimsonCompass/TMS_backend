@@ -17,36 +17,30 @@ import javax.crypto.SecretKey;
 
 @Configuration
 public class SecurityConfig {
-
-    @Value("${jwt.secret}")
+    SecurityConstants securityConstants;
     private String jwtSecret;
-
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
+    public SecurityConfig(SecurityConstants securityConstants) {
+        this.securityConstants = securityConstants;
+    }
+
     @Bean
     public SecretKey jwtSecretKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        return Keys.hmacShaKeyFor(securityConstants.getSecret().getBytes());
     }
 
     @Bean
     public long jwtExpiration() {
-        return jwtExpiration;
+        return securityConstants.getExpiration();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         IpAddressMatcher ipAddressMatcher = new IpAddressMatcher("127.0.0.1"); //TO-DO - AUTH_SERVICE_IP
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/users/sync")
-                        .access((authentication, context) ->
-                                new AuthorizationDecision(ipAddressMatcher.matches(context.getRequest())))
-                        .anyRequest().authenticated()
-                );
+        http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/**").permitAll().requestMatchers(HttpMethod.POST, "/api/users/sync").access((authentication, context) -> new AuthorizationDecision(ipAddressMatcher.matches(context.getRequest()))).anyRequest().authenticated());
 
         return http.build();
     }
