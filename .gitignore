@@ -35,5 +35,3 @@ build/
 ### app prop ###
 application.properties
 
-### app secret ###
-application-secret.properties
