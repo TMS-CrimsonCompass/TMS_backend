@@ -23,7 +23,11 @@ public class SecurityConfig {
     public SecurityConfig(JwtProperties jwtProps) {
         this.jwtProps = jwtProps;
     }
-
+    @Bean
+    public SecretKey jwtSecretKey() {
+        // derive a SecretKey from the raw string
+        return Keys.hmacShaKeyFor(jwtProps.getSecret().getBytes());
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         IpAddressMatcher loopback = new IpAddressMatcher("127.0.0.1");
