@@ -8,5 +8,5 @@ EXPOSE 8080
 # allow overriding the port via $PORT (Azure injects this env var)
 ENV PORT=8080
 
-# pass that into Spring Boot as server.port  
+# pass that into Spring Boot as server.port
 ENTRYPOINT ["sh","-c","java -Dserver.port=$PORT -jar app.jar"]
