@@ -1,10 +1,8 @@
 package com.backend.CrimsonCompass.security;
 
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,24 +11,23 @@ import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import javax.crypto.SecretKey;
 
-@PropertySource(value = {"classpath:application-secret.properties"})
-
 @Configuration
 public class SecurityConfig {
-    SecurityConstants securityConstants;
+    JwtProperties jwtProperties;
 
-    public SecurityConfig(SecurityConstants securityConstants) {
-        this.securityConstants = securityConstants;
+
+    public SecurityConfig(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
     }
 
     @Bean
     public SecretKey jwtSecretKey() {
-        return Keys.hmacShaKeyFor(securityConstants.getSecret().getBytes());
+        return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
     }
 
     @Bean
     public long jwtExpiration() {
-        return securityConstants.getExpiration();
+        return jwtProperties.getExpiration();
     }
 
     @Bean
