@@ -9,9 +9,12 @@ import java.time.LocalDate;
 @Data
 public class UserItinerary {
 
+
+    private Integer userItineraryId;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userItineraryId;
+    private Integer masterItineraryId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -25,5 +28,4 @@ public class UserItinerary {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private Integer masterItineraryId;
 }
