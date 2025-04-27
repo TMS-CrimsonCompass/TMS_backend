@@ -1,5 +1,6 @@
 package com.backend.CrimsonCompass.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,6 @@ public class EntityType {
     private String entityTypeName;
 
     @OneToMany(mappedBy = "entityType")
+    @JsonIgnore
     private Set<Review> reviews;
 }
