@@ -16,6 +16,8 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final EntityTypeRepository entityTypeRepository;
+    private final EmailService emailService;
+    private final UserRepository userRepository;
 
     public Booking createBooking(BookingRequest request) {
         // Get EntityType (e.g., Flight, Hotel, etc.)
@@ -39,7 +41,22 @@ public class BookingService {
 
         Booking savedBooking = bookingRepository.save(booking);
 
+        User user= userRepository.findByUserId(request.getUserId());
+        String subject = "Booking Confirmation - " + entityType.getEntityTypeName();
 
+        String body = "Dear " + user.getFirstName() + ",\n\n" +
+                "Thank you for choosing our service. Here are your booking details:\n\n" +
+                "Booking ID: " + savedBooking.getBookingId() + "\n" +
+                (savedBooking.getCheckInDate() != null ? "Check-In Date: " + savedBooking.getCheckInDate() + "\n" : "") +
+                (savedBooking.getCheckOutDate() != null ? "Check-Out Date: " + savedBooking.getCheckOutDate() + "\n" : "") +
+                (savedBooking.getDepartureDate() != null ? "Departure Date: " + savedBooking.getDepartureDate() + "\n" : "") +
+                (savedBooking.getArrivalDate() != null ? "Arrival Date: " + savedBooking.getArrivalDate() + "\n" : "") +
+                "Total Price: $" + savedBooking.getTotalPrice() + "\n" +
+                "Booking Status: " + savedBooking.getStatus().name() + "\n\n" +
+                "If you have any questions, feel free to contact our support team.\n\n" +
+                "Best regards,\n" +
+                "The Bookings Team - Crimson Compass";
+        emailService.sendEmail(user.getEmail(),subject,body);
 
         return savedBooking;
     }
