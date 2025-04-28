@@ -30,7 +30,8 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        IpAddressMatcher loopback = new IpAddressMatcher("127.0.0.1");
+        IpAddressMatcher loopback = new IpAddressMatcher("168.61.219.133");
+        IpAddressMatcher loopback1 = new IpAddressMatcher("168.61.222.59");
 
         http
                 .csrf(csrf -> csrf.disable())           // disable CSRF for stateless JWT
@@ -38,7 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a -> a
                         // 1) Only allow sync from localhost
                         .requestMatchers(HttpMethod.POST, "/api/users/sync")
-                        .access((auth, ctx) -> new AuthorizationDecision(loopback.matches(ctx.getRequest())))
+                        .access((auth, ctx) -> new AuthorizationDecision(loopback.matches(ctx.getRequest()) || loopback1.matches(ctx.getRequest())))
                         // 2) Health endpoint (if you add actuator)
                         .requestMatchers("/actuator/health").permitAll()
                         // 3) Everything else under /api
