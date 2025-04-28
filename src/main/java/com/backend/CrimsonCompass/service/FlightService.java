@@ -6,6 +6,9 @@ import com.backend.CrimsonCompass.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,9 +18,14 @@ public class FlightService {
     @Autowired
     private FlightRepository flightRepository;
 
-    public List<FlightDTO> searchFlights(String from, String to) {
+    // ✅ Now supports date filtering
+    public List<FlightDTO> searchFlights(String from, String to, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+
         return flightRepository
-                .findByDepartureCityContainingIgnoreCaseAndArrivalCityContainingIgnoreCase(from, to)
+                .findByDepartureCityContainingIgnoreCaseAndArrivalCityContainingIgnoreCaseAndDepartureTimeBetween(
+                        from, to, startOfDay, endOfDay)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -33,7 +41,7 @@ public class FlightService {
                 flight.getArrivalAirport(),
                 flight.getDepartureTime(),
                 flight.getArrivalTime(),
-                flight.getDuration().toString(),  // Converts SQL TIME to "HH:mm:ss"
+                flight.getDuration().toString(),
                 flight.getPrice(),
                 flight.getAvailableSeats()
         );
