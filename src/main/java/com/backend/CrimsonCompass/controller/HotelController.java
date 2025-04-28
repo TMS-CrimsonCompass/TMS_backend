@@ -108,7 +108,10 @@ public class HotelController {
 
         List<String> imageUrls = hotelImageRepository.findByHotelHotelId(hotel.getHotelId())
                 .stream()
-                .map(HotelImage::getImageUrl)
+                .map(image -> {
+                    String url = image.getImageUrl();
+                    return url.startsWith("http") ? url : "http://localhost:8080/uploads/images/" + url;
+                })
                 .collect(Collectors.toList());
         dto.setImageUrls(imageUrls);
 

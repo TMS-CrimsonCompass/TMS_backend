@@ -64,8 +64,9 @@ CREATE TABLE IF NOT EXISTS Hotels (
 
 CREATE TABLE IF NOT EXISTS Amenities (
     amenity_id INT AUTO_INCREMENT PRIMARY KEY,
+    icon VARCHAR(255) NULL,
     name VARCHAR(100) NOT NULL UNIQUE,
-    icon_path VARCHAR(255) NULL
+    color VARCHAR(50) NULL
 );
 
 CREATE TABLE IF NOT EXISTS Hotel_Amenities (
@@ -119,16 +120,22 @@ CREATE TABLE IF NOT EXISTS Buses (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS Entity_Types (
+    entity_type_id INT AUTO_INCREMENT PRIMARY KEY,
+    entity_type_name VARCHAR(50) NOT NULL UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS Reviews (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    entity_id INT NOT NULL,  
-    entity_type ENUM('Place', 'Hotel', 'Flight', 'Bus') NOT NULL,  
-    rating DECIMAL(3,2) NOT NULL CHECK (rating BETWEEN 0 AND 5),  
+    entity_id INT NOT NULL,
+    entity_type_id INT NOT NULL,
+    rating DECIMAL(3,2) NOT NULL CHECK (rating BETWEEN 0 AND 5),
     review_text TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (entity_type_id) REFERENCES Entity_Types(entity_type_id)
 );
 
 CREATE TABLE IF NOT EXISTS Bookings (
@@ -162,6 +169,17 @@ CREATE TABLE IF NOT EXISTS Payments (
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS User_Itinerary (
+    user_itinerary_id INT ,
+    master_itinerary_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    title VARCHAR(255),
+    description TEXT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS Itinerary (
     itinerary_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -169,31 +187,20 @@ CREATE TABLE IF NOT EXISTS Itinerary (
     description TEXT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    status ENUM('Draft', 'Finalized', 'Completed') DEFAULT 'Draft',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS Itinerary_Places (
-    itinerary_place_id INT AUTO_INCREMENT PRIMARY KEY,
-    itinerary_id INT NOT NULL,
-    place_id BIGINT NOT NULL,
-    visit_date DATE NOT NULL,
-    FOREIGN KEY (itinerary_id) REFERENCES Itinerary(itinerary_id) ON DELETE CASCADE,
-    FOREIGN KEY (place_id) REFERENCES Places(place_id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS Itinerary_Transport (
-    itinerary_transport_id INT AUTO_INCREMENT PRIMARY KEY,
-    itinerary_id INT NOT NULL,
-    transport_type ENUM('Flight', 'Bus', 'Car', 'Train', 'Bike', 'Other') NOT NULL,
-    transport_id INT NULL, -- Will reference Flight/Bus if applicable
-    departure_location VARCHAR(255) NOT NULL,
-    arrival_location VARCHAR(255) NOT NULL,
-    departure_time DATETIME NOT NULL,
-    arrival_time DATETIME NOT NULL,
-    FOREIGN KEY (itinerary_id) REFERENCES Itinerary(itinerary_id) ON DELETE CASCADE
+    place_id BIGINT,
+    hotel_id INT,
+    entity_type_id INT,
+    entity_id INT,
+    booking_id INT,
+    master_itinerary_id INT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (place_id) REFERENCES Places(place_id) ON DELETE SET NULL,
+    FOREIGN KEY (hotel_id) REFERENCES Hotels(hotel_id) ON DELETE SET NULL,
+    FOREIGN KEY (entity_type_id) REFERENCES Entity_Types(entity_type_id) ON DELETE SET NULL,
+    FOREIGN KEY (master_itinerary_id) REFERENCES User_Itinerary(master_itinerary_id) ON DELETE SET NULL,
+    FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id) ON DELETE SET NULL
 );
 
 
@@ -348,23 +355,23 @@ VALUES
 ('Taj View Hotel', 'Stay near Taj Mahal', 'Agra, India', 27.175144, 78.042142, 'India', 'Uttar Pradesh', 'Agra', 150.00, 4.3),
 ('Sydney Harbour Hotel', 'Hotel with Opera House view', 'Sydney, Australia', -33.856784, 151.215297, 'Australia', 'New South Wales', 'Sydney', 300.00, 4.7);
 
-INSERT INTO Amenities (name, icon_path) VALUES 
-('Free Wi-Fi', '/icons/wifi.svg'),
-('Swimming Pool', '/icons/pool.svg'),
-('Gym', '/icons/gym.svg'),
-('Spa', '/icons/spa.svg'),
-('Restaurant', '/icons/restaurant.svg'),
-('Bar', '/icons/bar.svg'),
-('Parking', '/icons/parking.svg'),
-('Air Conditioning', '/icons/ac.svg'),
-('Room Service', '/icons/room_service.svg'),
-('Pet Friendly', '/icons/pet_friendly.svg'),
-('Airport Shuttle', '/icons/shuttle.svg'),
-('Laundry Service', '/icons/laundry.svg'),
-('24/7 Front Desk', '/icons/front_desk.svg'),
-('Non-Smoking Rooms', '/icons/no_smoking.svg'),
-('Wheelchair Accessible', '/icons/wheelchair.svg'),
-('Breakfast Included', '/icons/breakfast.svg');
+INSERT INTO Amenities (name, icon, color) VALUES
+('Free Wi-Fi', 'fa-solid fa-wifi', 'text-purple-500'),
+('Swimming Pool', 'fa-solid fa-person-swimming', 'text-teal-500'),
+('Gym', 'fa-solid fa-dumbbell', 'text-orange-500'),
+('Spa', 'fa-solid fa-bath', 'text-pink-500'),
+('Restaurant', 'fa-solid fa-utensils', 'text-red-500'),
+('Bar', 'fa-solid fa-beer', 'text-yellow-500'),
+('Parking', 'fa-solid fa-car', 'text-blue-500'),
+('Air Conditioning', 'fa-solid fa-snowflake', 'text-cyan-500'),
+('Room Service', 'fa-solid fa-concierge-bell', 'text-indigo-500'),
+('Pet Friendly', 'fa-solid fa-paw', 'text-yellow-500'),
+('Airport Shuttle', 'fa-solid fa-shuttle-van', 'text-sky-500'),
+('Laundry Service', 'fa-solid fa-soap', 'text-gray-500'),
+('24/7 Front Desk', 'fa-solid fa-bell-concierge', 'text-amber-500'),
+('Non-Smoking Rooms', 'fa-solid fa-ban-smoking', 'text-rose-500'),
+('Wheelchair Accessible', 'fa-solid fa-wheelchair', 'text-green-500'),
+('Breakfast Included', 'fa-solid fa-coffee', 'text-amber-600');
 
 INSERT INTO Hotel_Amenities (hotel_id, amenity_id) VALUES
 (1, 1),  -- Free Wi-Fi
@@ -434,14 +441,20 @@ VALUES
 ('Lufthansa', 'LH101', 'FRA', 'DEL', 'Frankfurt', 'Delhi', '2025-03-25 06:00:00', '2025-03-25 18:30:00', '12:30:00', 700.00, 40),
 ('IndiGo', '6E303', 'DEL', 'BOM', 'Delhi', 'Mumbai', '2025-03-30 12:00:00', '2025-03-30 14:30:00', '02:30:00', 100.00, 60);
 
+INSERT INTO Entity_Types (entity_type_name) VALUES 
+('Place'), 
+('Hotel'), 
+('Flight'), 
+('Bus');
+
 -- Insert dummy reviews
-INSERT INTO Reviews (user_id, entity_id, entity_type, rating, review_text)
+INSERT INTO Reviews (user_id, entity_id, entity_type_id, rating, review_text)
 VALUES 
-(1, 1, 'Place', 4.8, 'Breathtaking view from the top!'),
-(2, 2, 'Place', 4.7, 'Amazing piece of history.'),
-(3, 3, 'Hotel', 4.5, 'Excellent service and location.'),
-(4, 4, 'Flight', 4.2, 'Smooth flight, good service.'),
-(5, 5, 'Bus', 3.8, 'Comfortable journey, but a bit late.');
+(1, 1, (SELECT entity_type_id FROM Entity_Types WHERE entity_type_name = 'Place'), 4.8, 'Breathtaking view from the top!'),
+(2, 2, (SELECT entity_type_id FROM Entity_Types WHERE entity_type_name = 'Place'), 4.7, 'Amazing piece of history.'),
+(3, 3, (SELECT entity_type_id FROM Entity_Types WHERE entity_type_name = 'Hotel'), 4.5, 'Excellent service and location.'),
+(4, 4, (SELECT entity_type_id FROM Entity_Types WHERE entity_type_name = 'Flight'), 4.2, 'Smooth flight, good service.'),
+(5, 5, (SELECT entity_type_id FROM Entity_Types WHERE entity_type_name = 'Bus'), 3.8, 'Comfortable journey, but a bit late.');
 
 -- Insert dummy bookings
 INSERT INTO Bookings (user_id, entity_id, entity_type, check_in_date, check_out_date, departure_date, arrival_date, total_price, status)

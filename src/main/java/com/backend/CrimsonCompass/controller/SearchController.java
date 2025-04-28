@@ -35,7 +35,8 @@ public class SearchController {
             dto.setCity(place.getCity());
             dto.setCountry(place.getCountry());
             if (place.getImages() != null && !place.getImages().isEmpty()) {
-                dto.setImage(place.getImages().get(0).getImageUrl());
+                String url = place.getImages().get(0).getImageUrl();
+                dto.setImage(url.startsWith("http") ? url : "http://localhost:8080/uploads/images/" + url);
             }
             suggestions.add(dto);
         }
@@ -50,7 +51,8 @@ public class SearchController {
             dto.setCity(hotel.getCity());
             dto.setCountry(hotel.getCountry());
             if (hotel.getImages() != null && !hotel.getImages().isEmpty()) {
-                dto.setImage(hotel.getImages().get(0).getImageUrl());
+                String url = hotel.getImages().get(0).getImageUrl();
+                dto.setImage(url.startsWith("http") ? url : "http://localhost:8080/uploads/images/" + url);
             }
             suggestions.add(dto);
         }
@@ -72,7 +74,8 @@ public class SearchController {
             dto.setCity(place.getCity());
             dto.setCountry(place.getCountry());
             if (place.getImages() != null && !place.getImages().isEmpty()) {
-                dto.setImage(place.getImages().get(0).getImageUrl());
+                String url = place.getImages().get(0).getImageUrl();
+                dto.setImage(url.startsWith("http") ? url : "http://localhost:8080/uploads/images/" + url);
             }
             suggestions.add(dto);
         }
@@ -94,7 +97,8 @@ public class SearchController {
             dto.setCity(hotel.getCity());
             dto.setCountry(hotel.getCountry());
             if (hotel.getImages() != null && !hotel.getImages().isEmpty()) {
-                dto.setImage(hotel.getImages().get(0).getImageUrl());
+                String url = hotel.getImages().get(0).getImageUrl();
+                dto.setImage(url.startsWith("http") ? url : "http://localhost:8080/uploads/images/" + url);
             }
             suggestions.add(dto);
         }

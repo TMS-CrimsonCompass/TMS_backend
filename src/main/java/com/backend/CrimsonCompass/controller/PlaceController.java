@@ -111,7 +111,13 @@ public class PlaceController {
     private PlaceResponseDTO convertToResponseDTO(Place place) {
         List<PlaceImage> images = placeService.getImagesByPlaceId(place.getPlaceId());
         List<PlaceImageResponseDTO> imageResponses = images.stream()
-                .map(image -> new PlaceImageResponseDTO(image.getImageId(), image.getImageUrl()))
+                .map(image -> {
+                    String url = image.getImageUrl();
+                    if (!url.startsWith("http")) {
+                        url = "http://localhost:8080/uploads/images/" + url;
+                    }
+                    return new PlaceImageResponseDTO(image.getImageId(), url);
+                })
                 .collect(Collectors.toList());
 
         List<ReviewResponseDTO> reviews = reviewService.getReviewsByEntity((long) place.getPlaceId(), "Place"); // New block to get reviews
