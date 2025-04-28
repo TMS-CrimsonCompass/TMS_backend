@@ -87,7 +87,6 @@ public class UserService implements IUserService {
     }
 
     public Optional<User> getUserByAuthId(String authID) {return userRepository.findByAuthId(authID);}
-}
 
     // 🔥 NEW METHOD used in BookingController
     public Integer getUserIdFromEmail(String email) {
