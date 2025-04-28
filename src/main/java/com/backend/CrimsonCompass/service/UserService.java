@@ -86,8 +86,9 @@ public class UserService implements IUserService {
         userRepository.save(newUser);
     }
 
-    public Optional<User> getUserByAuthId(String authID) {return userRepository.findByAuthId(authID);}
-}
+    public Optional<User> getUserByAuthId(String authID) {
+        return userRepository.findByAuthId(authID);}
+
 
     // 🔥 NEW METHOD used in BookingController
     public Integer getUserIdFromEmail(String email) {
