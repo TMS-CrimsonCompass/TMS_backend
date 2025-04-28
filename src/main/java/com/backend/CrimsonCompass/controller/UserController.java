@@ -2,9 +2,10 @@ package com.backend.CrimsonCompass.controller;
 
 import com.backend.CrimsonCompass.dto.LoginRequest;
 import com.backend.CrimsonCompass.dto.LoginResponse;
+import com.backend.CrimsonCompass.dto.UserSyncRequest;
+import com.backend.CrimsonCompass.security.JwtProperties;
 import com.backend.CrimsonCompass.service.UserService;
 import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +20,13 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 @CrossOrigin("http://localhost:3000")
 public class UserController {
-    @Autowired
-    private SecretKey jwtSecretKey;
+    private final SecretKey jwtSecretKey;
+    private final JwtProperties jwtProperties;
+    private final UserService   userService;
 
-    @Autowired
-    private long jwtExpiration;
-
-    private final UserService userService;
-
-    public UserController(UserService userService) {
+    public UserController(SecretKey jwtSecretKey, JwtProperties jwtProperties, UserService userService) {
+        this.jwtSecretKey = jwtSecretKey;
+        this.jwtProperties = jwtProperties;
         this.userService = userService;
     }
 
@@ -43,11 +42,12 @@ public class UserController {
 
         if (user.isPresent()) {
             // Generate JWT
+            long ttl = jwtProperties.getExpiration();
             String token = Jwts.builder()
                     .setSubject(user.get().getEmail())
                     .claim("userId", user.get().getUserId())
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                    .setExpiration(new Date(System.currentTimeMillis() + ttl))
                     .signWith(jwtSecretKey)
                     .compact();
 
@@ -70,6 +70,12 @@ public class UserController {
         Optional<User> user = userService.getUserByEmail(email);
         return user.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/sync")
+    public ResponseEntity<Void> syncUser(@RequestBody UserSyncRequest request) {
+        userService.syncOAuthUser(request);
+        return ResponseEntity.ok().build();
     }
 }
 
