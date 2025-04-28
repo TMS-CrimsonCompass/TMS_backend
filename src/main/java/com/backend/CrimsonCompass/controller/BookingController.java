@@ -19,8 +19,12 @@ public class BookingController {
     public Booking createBooking(@RequestBody BookingRequest request) {
         // 🔥 HARDCODE userId temporarily just for testing
         request.setUserId(1);  // 👈 this is just temporary (assume userId = 1 for now)
+        try{
+            return bookingService.createBooking(request);
+        }catch (Exception e){
+            return null;
+        }
 
-        return bookingService.createBooking(request);
     }
 
     @GetMapping("/user/{userId}")

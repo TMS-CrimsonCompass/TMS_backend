@@ -38,7 +38,7 @@ public class PasswordResetService implements IPasswordResetService {
         resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
         tokenRepository.save(resetToken);
 
-        String resetLink = "http://localhost:3000/reset-password?token=" + token;
+        String resetLink = "https://jolly-bay-02addd710.6.azurestaticapps.net//reset-password?token=" + token;
         emailService.sendEmail(user.getEmail(), "Password Reset Request",
                 "Click the link to reset your password: " + resetLink);
     }

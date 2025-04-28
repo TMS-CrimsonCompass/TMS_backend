@@ -79,7 +79,7 @@ public class ItineraryService implements IItineraryService {
 
     @Override
     public List<Itinerary> getItinerariesByMasterItineraryId(Integer masterItineraryId) {
-        return itineraryRepository.findByMasterItineraryUserItineraryId(masterItineraryId);
+        return itineraryRepository.findByMasterItineraryMasterItineraryId(masterItineraryId);
     }
 
     @Override
